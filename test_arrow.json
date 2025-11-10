@@ -66,7 +66,7 @@
     "FunctionInvoke": "create-input",
     "DefaultDataStore": "My_S3_Bucket",
     "FunctionGitRepo": {
-        "create_input": "JStover95/FaaSr-Testing-Functions/arrow_test_functions",
+        "create_input": "https://github.com/JStover95/FaaSr-Testing-Functions/blob/main/test-functions/01_create_input.py",
         "test_arrow": "JStover95/FaaSr-Testing-Functions/arrow_test_functions"
     },
     "LoggingDataStore": "My_S3_Bucket",
@@ -75,6 +75,7 @@
     "WorkflowName": "test_arrow"
 
 }
+
 
 
 
