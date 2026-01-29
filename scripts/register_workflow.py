@@ -139,12 +139,11 @@ def generate_github_secret_imports(faasr_payload):
     return import_statements
 
 
-def generate_user_defined_secret_imports(faasr_payload, action_name):
-    """Generate user-defined secret imports for a function"""
+def generate_user_defined_secret_imports(faasr_payload):
+    """Generate user-defined secret imports for the workflow (applies to all functions)"""
     import_statements = []
 
-    # Add secrets for function
-    for secret_name in faasr_payload.get("ActionList", {}).get(action_name, {}).get("Secrets", []):
+    for secret_name in faasr_payload.get("Secrets", []):
         import_statements.append(f"{secret_name}: ${{{{ secrets.{secret_name}}}}}")
 
     indent = " " * 20
@@ -266,6 +265,9 @@ def deploy_to_github(workflow_data):
         default_branch = repo.default_branch
         logger.info(f"Using branch: {default_branch}")
 
+        # User-defined secrets (workflow-level, same for all functions)
+        user_defined_secret_imports = generate_user_defined_secret_imports(workflow_data)
+
         # Deploy each action
         for action_name, action_data in github_actions.items():
             # Create prefixed action name using workflow_name-action_name format
@@ -284,7 +286,7 @@ def deploy_to_github(workflow_data):
 
             # Dynamically set required secrets and variables
             secret_imports = generate_github_secret_imports(workflow_data)
-            if user_defined_secret_imports := generate_user_defined_secret_imports(workflow_data, action_name):
+            if user_defined_secret_imports:
                 secret_imports += "\n" + user_defined_secret_imports
 
             if requires_vm:
